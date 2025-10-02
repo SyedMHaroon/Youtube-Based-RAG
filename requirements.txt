@@ -1,0 +1,7 @@
+faster-whisper
+streamlit
+langchain
+langchain-huggingface
+openai
+faiss-cpu
+sentence-transformers
