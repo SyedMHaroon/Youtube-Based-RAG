@@ -19,13 +19,18 @@ def main():
     url = st.text_input("Youtube URL")
     if st.button("Transcribe"):
         audio_path = download_audio_from_youtube(url)
-        transcript = transcribe_audio(
-            audio_path=audio_path,
-            model_size="base",
-            output_file="transcript.json"
-        )
+        try:
+            transcript = transcribe_audio(
+                audio_path=audio_path,
+                model_size="base",
+                output_file="transcript.json"
+            )
+        finally:
+            if os.path.exists(audio_path):
+                os.remove(audio_path)            
         with open('transcript.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
+
         for segment in data['segments']:
             start_time = segment['start_time']
             end_time = segment['end_time']
@@ -33,7 +38,7 @@ def main():
             
             st.write(f"[{start_time} - {end_time}] {text}")
 
-    userQuestions = st.text_input("Ask a question about your PDF")
+    userQuestions = st.text_input("Ask a question about your video")
     if userQuestions:
         ragModel(userQuestions, 'transcript.json')
     
@@ -152,6 +157,13 @@ def ragModel(question, json_file):
 
         st.write(response)
 
+
+# def translate(file_json):
+#     if file_json:
+        #load the json file
+        #translate the transciption with respect to the time stamp
+        #translate all of the text
+        #return back to llm
 
 if __name__ == "__main__":
     main()
